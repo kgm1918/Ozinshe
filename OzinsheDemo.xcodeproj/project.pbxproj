@@ -22,6 +22,10 @@
 		8388BA1E2DEEFCF100C20268 /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8388BA1A2DEEFCF000C20268 /* SF-Pro-Display-Bold.otf */; };
 		8388BA1F2DEEFCF100C20268 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8388BA1B2DEEFCF000C20268 /* SF-Pro-Display-Medium.otf */; };
 		8388BA202DEEFCF100C20268 /* SF-Pro-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8388BA1C2DEEFCF000C20268 /* SF-Pro-Display-Semibold.otf */; };
+		8388BA222DEF6D9E00C20268 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA212DEF6D9E00C20268 /* OnboardingViewController.swift */; };
+		8388BA292DEF7A7100C20268 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA282DEF7A7100C20268 /* OnboardingPageViewController.swift */; };
+		8388BA2B2DF0B90100C20268 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */; };
+		8388BA2D2DF20A2F00C20268 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */; };
 		C5D736E97EB76574F4A51527 /* Pods_OzinsheDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +48,10 @@
 		8388BA1A2DEEFCF000C20268 /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		8388BA1B2DEEFCF000C20268 /* SF-Pro-Display-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Medium.otf"; sourceTree = "<group>"; };
 		8388BA1C2DEEFCF000C20268 /* SF-Pro-Display-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Semibold.otf"; sourceTree = "<group>"; };
+		8388BA212DEF6D9E00C20268 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		8388BA282DEF7A7100C20268 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
+		8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
+		8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		DF073417B199FED394905A4F /* Pods-OzinsheDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OzinsheDemo.debug.xcconfig"; path = "Target Support Files/Pods-OzinsheDemo/Pods-OzinsheDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OzinsheDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -89,7 +97,10 @@
 				8388BA0E2DEEDEC700C20268 /* HomeViewController.swift */,
 				8388BA122DEEDED600C20268 /* FavouriteViewController.swift */,
 				8388BA102DEEDECE00C20268 /* SearchViewController.swift */,
+				8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */,
+				8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */,
 				8388BA162DEEEB5200C20268 /* MovieTableViewCell.swift */,
+				8388BA272DEF6E1100C20268 /* Onboarding */,
 				8388BA142DEEDEDD00C20268 /* ProfileViewController.swift */,
 				8388BA012DEA40BD00C20268 /* Assets.xcassets */,
 				8388BA032DEA40BD00C20268 /* LaunchScreen.storyboard */,
@@ -107,6 +118,15 @@
 				8388BA1C2DEEFCF000C20268 /* SF-Pro-Display-Semibold.otf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		8388BA272DEF6E1100C20268 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				8388BA212DEF6D9E00C20268 /* OnboardingViewController.swift */,
+				8388BA282DEF7A7100C20268 /* OnboardingPageViewController.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		BE31A7454D44C656D4743759 /* Pods */ = {
@@ -244,8 +264,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8388BA2B2DF0B90100C20268 /* AuthorizationViewController.swift in Sources */,
 				8388BA112DEEDECE00C20268 /* SearchViewController.swift in Sources */,
 				8388BA0F2DEEDEC700C20268 /* HomeViewController.swift in Sources */,
+				8388BA222DEF6D9E00C20268 /* OnboardingViewController.swift in Sources */,
+				8388BA2D2DF20A2F00C20268 /* RegistrationViewController.swift in Sources */,
 				8388BA172DEEEB5200C20268 /* MovieTableViewCell.swift in Sources */,
 				8388B9FD2DEA40BA00C20268 /* ViewController.swift in Sources */,
 				8388BA0D2DEEDE9D00C20268 /* TabBarController.swift in Sources */,
@@ -253,6 +276,7 @@
 				8388B9F92DEA40BA00C20268 /* AppDelegate.swift in Sources */,
 				8388BA152DEEDEDD00C20268 /* ProfileViewController.swift in Sources */,
 				8388B9FB2DEA40BA00C20268 /* SceneDelegate.swift in Sources */,
+				8388BA292DEF7A7100C20268 /* OnboardingPageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
