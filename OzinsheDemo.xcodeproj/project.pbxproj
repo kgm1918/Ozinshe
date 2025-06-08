@@ -26,6 +26,7 @@
 		8388BA292DEF7A7100C20268 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA282DEF7A7100C20268 /* OnboardingPageViewController.swift */; };
 		8388BA2B2DF0B90100C20268 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */; };
 		8388BA2D2DF20A2F00C20268 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */; };
+		8388BA2F2DF57EBF00C20268 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2E2DF57EBF00C20268 /* Movie.swift */; };
 		C5D736E97EB76574F4A51527 /* Pods_OzinsheDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +53,7 @@
 		8388BA282DEF7A7100C20268 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
 		8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
+		8388BA2E2DF57EBF00C20268 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		DF073417B199FED394905A4F /* Pods-OzinsheDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OzinsheDemo.debug.xcconfig"; path = "Target Support Files/Pods-OzinsheDemo/Pods-OzinsheDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OzinsheDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -95,6 +97,7 @@
 				8388B9FC2DEA40BA00C20268 /* ViewController.swift */,
 				8388BA0C2DEEDE9D00C20268 /* TabBarController.swift */,
 				8388BA0E2DEEDEC700C20268 /* HomeViewController.swift */,
+				8388BA2E2DF57EBF00C20268 /* Movie.swift */,
 				8388BA122DEEDED600C20268 /* FavouriteViewController.swift */,
 				8388BA102DEEDECE00C20268 /* SearchViewController.swift */,
 				8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */,
@@ -264,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8388BA2F2DF57EBF00C20268 /* Movie.swift in Sources */,
 				8388BA2B2DF0B90100C20268 /* AuthorizationViewController.swift in Sources */,
 				8388BA112DEEDECE00C20268 /* SearchViewController.swift in Sources */,
 				8388BA0F2DEEDEC700C20268 /* HomeViewController.swift in Sources */,
