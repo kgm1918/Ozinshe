@@ -27,6 +27,11 @@
 		8388BA2B2DF0B90100C20268 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */; };
 		8388BA2D2DF20A2F00C20268 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */; };
 		8388BA2F2DF57EBF00C20268 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA2E2DF57EBF00C20268 /* Movie.swift */; };
+		8388BA322DF5D49A00C20268 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA312DF5D49A00C20268 /* DetailViewController.swift */; };
+		8388BA342DF5E07100C20268 /* MovieCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA332DF5E07100C20268 /* MovieCardView.swift */; };
+		8388BA362DF82DDB00C20268 /* EpisodesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA352DF82DDB00C20268 /* EpisodesTableViewController.swift */; };
+		8388BA382DF8780B00C20268 /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA372DF8780B00C20268 /* Episode.swift */; };
+		8388BA3A2DF878FE00C20268 /* EpisodeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BA392DF878FE00C20268 /* EpisodeTableViewCell.swift */; };
 		C5D736E97EB76574F4A51527 /* Pods_OzinsheDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +59,11 @@
 		8388BA2A2DF0B90100C20268 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
 		8388BA2C2DF20A2F00C20268 /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		8388BA2E2DF57EBF00C20268 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
+		8388BA312DF5D49A00C20268 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		8388BA332DF5E07100C20268 /* MovieCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardView.swift; sourceTree = "<group>"; };
+		8388BA352DF82DDB00C20268 /* EpisodesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesTableViewController.swift; sourceTree = "<group>"; };
+		8388BA372DF8780B00C20268 /* Episode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
+		8388BA392DF878FE00C20268 /* EpisodeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeTableViewCell.swift; sourceTree = "<group>"; };
 		DF073417B199FED394905A4F /* Pods-OzinsheDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OzinsheDemo.debug.xcconfig"; path = "Target Support Files/Pods-OzinsheDemo/Pods-OzinsheDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OzinsheDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -96,7 +106,7 @@
 				8388B9FA2DEA40BA00C20268 /* SceneDelegate.swift */,
 				8388B9FC2DEA40BA00C20268 /* ViewController.swift */,
 				8388BA0C2DEEDE9D00C20268 /* TabBarController.swift */,
-				8388BA0E2DEEDEC700C20268 /* HomeViewController.swift */,
+				8388BA302DF5D48400C20268 /* Home */,
 				8388BA2E2DF57EBF00C20268 /* Movie.swift */,
 				8388BA122DEEDED600C20268 /* FavouriteViewController.swift */,
 				8388BA102DEEDECE00C20268 /* SearchViewController.swift */,
@@ -130,6 +140,19 @@
 				8388BA282DEF7A7100C20268 /* OnboardingPageViewController.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		8388BA302DF5D48400C20268 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				8388BA0E2DEEDEC700C20268 /* HomeViewController.swift */,
+				8388BA332DF5E07100C20268 /* MovieCardView.swift */,
+				8388BA312DF5D49A00C20268 /* DetailViewController.swift */,
+				8388BA352DF82DDB00C20268 /* EpisodesTableViewController.swift */,
+				8388BA372DF8780B00C20268 /* Episode.swift */,
+				8388BA392DF878FE00C20268 /* EpisodeTableViewCell.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 		BE31A7454D44C656D4743759 /* Pods */ = {
@@ -270,15 +293,20 @@
 				8388BA2F2DF57EBF00C20268 /* Movie.swift in Sources */,
 				8388BA2B2DF0B90100C20268 /* AuthorizationViewController.swift in Sources */,
 				8388BA112DEEDECE00C20268 /* SearchViewController.swift in Sources */,
+				8388BA342DF5E07100C20268 /* MovieCardView.swift in Sources */,
+				8388BA362DF82DDB00C20268 /* EpisodesTableViewController.swift in Sources */,
 				8388BA0F2DEEDEC700C20268 /* HomeViewController.swift in Sources */,
 				8388BA222DEF6D9E00C20268 /* OnboardingViewController.swift in Sources */,
+				8388BA382DF8780B00C20268 /* Episode.swift in Sources */,
 				8388BA2D2DF20A2F00C20268 /* RegistrationViewController.swift in Sources */,
 				8388BA172DEEEB5200C20268 /* MovieTableViewCell.swift in Sources */,
 				8388B9FD2DEA40BA00C20268 /* ViewController.swift in Sources */,
+				8388BA3A2DF878FE00C20268 /* EpisodeTableViewCell.swift in Sources */,
 				8388BA0D2DEEDE9D00C20268 /* TabBarController.swift in Sources */,
 				8388BA132DEEDED600C20268 /* FavouriteViewController.swift in Sources */,
 				8388B9F92DEA40BA00C20268 /* AppDelegate.swift in Sources */,
 				8388BA152DEEDEDD00C20268 /* ProfileViewController.swift in Sources */,
+				8388BA322DF5D49A00C20268 /* DetailViewController.swift in Sources */,
 				8388B9FB2DEA40BA00C20268 /* SceneDelegate.swift in Sources */,
 				8388BA292DEF7A7100C20268 /* OnboardingPageViewController.swift in Sources */,
 			);

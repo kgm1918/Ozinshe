@@ -37,7 +37,14 @@ class HomeViewController: UIViewController {
             view.backgroundColor = .white
             setupScrollView()
             setupContent()
+            navigationItem.backButtonTitle = ""
         }
+    
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            navigationController?.setNavigationBarHidden(true, animated: false)
+        }
+
 
         private func setupScrollView() {
             scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -66,52 +73,49 @@ class HomeViewController: UIViewController {
         private func setupContent() {
             let logoRow = makeHeader()
             let featuredBanner = makeFavList()
-            let section1Cards = continueWatchingMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
-            }
+            let section1Cards = continueWatchingMovies.map { makeCard(from: $0) }
             let section1 = makeHorizontalSection(title: "Қарауды жалғастырыңыз", cards: section1Cards, type: 2)
             let section2Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section2 = makeHorizontalSection(title: "Трендтегілер", cards: section2Cards, type: 3)
 
             let section3Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section3 = makeHorizontalSection(title: "Сізге арналған фильмдер", cards: section3Cards, type: 3)
 
             let section4Cards = genresList.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section4 = makeHorizontalSection(title: "Жанрды таңдаңыз", cards: section4Cards, type: 4)
             
             let section5Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section5 = makeHorizontalSection(title: "Жаңа жобалар", cards: section5Cards, type: 3)
             
             let section6Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
-            }
+                makeCard(from: $0)            }
             let section6 = makeHorizontalSection(title: "Тв-бағдарлама және реалити-шоу", cards: section6Cards, type: 3)
             
             let section7Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section7 = makeHorizontalSection(title: "Телехикая", cards: section7Cards, type: 3)
             
             let section8Cards = ageList.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section8 = makeHorizontalSection(title: "Жасына сәйкес", cards: section8Cards, type: 4)
             
             let section9Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section9 = makeHorizontalSection(title: "Деректі фильм", cards: section9Cards, type: 3)
             
             let section10Cards = popularMovies.map {
-                makeCard(title: $0.title, imageName: $0.imageName, movietitle: $0.movietitle, moviedescription: $0.description, cardType: $0.cardType)
+                makeCard(from: $0)
             }
             let section10 = makeHorizontalSection(title: "Шетел фильмдері", cards: section10Cards, type: 3)
             
@@ -148,102 +152,14 @@ class HomeViewController: UIViewController {
             return container
         }
 
-    private func makeCard(title: String, imageName: String, movietitle: String, moviedescription: String, cardType: Int) -> UIView {
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-
-        let imageView = UIImageView(image: UIImage(named: imageName))
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 12
-        imageView.clipsToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(imageView)
-
-        var width: CGFloat = 300
-        var height: CGFloat = 165
-        var movieTitleSize: CGFloat = 14
-        var noTitle = false
-        if cardType == 1 {
-            let label = UILabel()
-            label.text = title
-            label.textColor = .white
-            label.font = UIFont(name: "SFProDisplay-Semibold", size: 12)
-            label.backgroundColor = UIColor(named: "7E2DFC")
-            label.textAlignment = .center
-            label.layer.cornerRadius = 8
-            label.clipsToBounds = true
-            label.translatesAutoresizingMaskIntoConstraints = false
-            imageView.addSubview(label)
-
-            NSLayoutConstraint.activate([
-                label.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 8),
-                label.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 8),
-                label.heightAnchor.constraint(equalToConstant: 24),
-                label.widthAnchor.constraint(greaterThanOrEqualToConstant: 77),
-            ])
-        } else if cardType == 2 {
-            width = 184
-            height = 112
-            movieTitleSize = 12
-        } else if cardType == 3 {
-            width = 112
-            height = 164
-            movieTitleSize = 12
-        } else {
-            width = 184
-            height = 112
-            noTitle = true
-            let label = UILabel()
-            label.text = title
-            label.textColor = .white
-            label.font = UIFont(name: "SFProDisplay-Semibold", size: 14)
-            label.textAlignment = .center
-            label.translatesAutoresizingMaskIntoConstraints = false
-            imageView.addSubview(label)
-            NSLayoutConstraint.activate([
-                label.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-                label.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
-            ])
-        }
-
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: container.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: width),
-            imageView.heightAnchor.constraint(equalToConstant: height)
-        ])
-
-        if !noTitle{
-            let movieTitle = UILabel()
-            movieTitle.text = movietitle
-            movieTitle.numberOfLines = 2
-            movieTitle.font = UIFont(name: "SFProDisplay-Bold", size: movieTitleSize)
-            movieTitle.textAlignment = .left
-            movieTitle.translatesAutoresizingMaskIntoConstraints = false
-            
-            let movieDescription = UILabel()
-            movieDescription.text = moviedescription
-            movieDescription.numberOfLines = 2
-            movieDescription.font = UIFont(name: "SFProDisplay-Regular", size: 12)
-            movieDescription.textColor = UIColor(named: "9CA3AF")
-            movieDescription.translatesAutoresizingMaskIntoConstraints = false
-            
-            container.addSubview(movieTitle)
-            container.addSubview(movieDescription)
-            
-            NSLayoutConstraint.activate([
-                movieTitle.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
-                movieTitle.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-                movieTitle.widthAnchor.constraint(equalToConstant: width),
-                
-                movieDescription.topAnchor.constraint(equalTo: movieTitle.bottomAnchor, constant: 8),
-                movieDescription.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-                movieDescription.widthAnchor.constraint(equalToConstant: width)
-            ])
-        }
-
-        return container
+    private func makeCard(from movie: Movie) -> UIView {
+        return MovieCardView(movie: movie) { [weak self] in
+               guard let self = self else { return }
+               let detailVC = DetailViewController()
+               detailVC.movie = movie
+               self.navigationController?.pushViewController(detailVC, animated: true)
+          
+           }
     }
 
 
@@ -264,8 +180,8 @@ class HomeViewController: UIViewController {
             scroll.bottomAnchor.constraint(equalTo: container.bottomAnchor)
         ])
       
-        let card1 = makeCard(title: "Телехикая", imageName: "kizgaldaktar", movietitle: "Қызғалдақтар мекені", moviedescription: "Шытырман оқиғалы мультсериал Елбасының «Ұлы даланың жеті қыры» бағдарламасы аясында жүз...", cardType: 1)
-        let card2 = makeCard(title: "Телехикая", imageName: "kizgaldaktar", movietitle: "Ойыншықтар", moviedescription: "5 жасар Алуаның ойыншықтары өте көп. Ол барлығын бірдей жақсы көріп, ұқыпты, таза ұстайды", cardType: 1)
+        let card1 = makeCard(from: Movie(title: "Телехикая", imageName: "kizgaldaktar", movietitle: "Қызғалдақтар мекені", description: "Шытырман оқиғалы мультсериал Елбасының «Ұлы даланың жеті қыры» бағдарламасы аясында жүз...", cardType: 1))
+        let card2 = makeCard(from: Movie(title: "Телехикая", imageName: "kizgaldaktar", movietitle: "Ойыншықтар", description: "5 жасар Алуаның ойыншықтары өте көп. Ол барлығын бірдей жақсы көріп, ұқыпты, таза ұстайды", cardType: 1))
 
         
         let stack = UIStackView(arrangedSubviews: [card1, card2])
@@ -306,7 +222,7 @@ class HomeViewController: UIViewController {
                 button.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10)
             ])
         } else {
-            height = 152
+            height = 146
         }
        
         container.heightAnchor.constraint(equalToConstant: height).isActive = true
@@ -346,10 +262,10 @@ class HomeViewController: UIViewController {
             stack.leadingAnchor.constraint(equalTo: scroll.leadingAnchor),
             stack.trailingAnchor.constraint(equalTo: scroll.trailingAnchor),
             stack.bottomAnchor.constraint(equalTo: scroll.bottomAnchor),
-            stack.heightAnchor.constraint(equalToConstant: 120)
+            stack.heightAnchor.constraint(equalTo: scroll.heightAnchor)
+
         ])
 
-       
         return container
     }
 
