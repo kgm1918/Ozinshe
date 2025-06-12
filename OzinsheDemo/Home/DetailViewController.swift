@@ -411,7 +411,6 @@ class DetailViewController: UIViewController {
     }
     
     @objc func playButtonTapped(){
-        print("check")
         let episodesVC = EpisodesTableViewController()
         self.navigationController?.pushViewController(episodesVC, animated: true)
     }

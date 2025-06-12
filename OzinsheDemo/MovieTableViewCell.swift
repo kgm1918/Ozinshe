@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 class MovieTableViewCell: UITableViewCell {
-
+    let identifier = "MovieTableCell"
     lazy var posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "image")
@@ -112,5 +112,11 @@ class MovieTableViewCell: UITableViewCell {
         fatalError()
     }
     
+    func configure(with movie: Movie) {
+        titleLabel.text = movie.movietitle
+        subtitleLabel.text = movie.description
+        posterImageView.image = UIImage(named: movie.imageName)
+    }
+
 
 }

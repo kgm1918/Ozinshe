@@ -47,6 +47,7 @@ class HomeViewController: UIViewController {
 
 
         private func setupScrollView() {
+            scrollView.contentInsetAdjustmentBehavior = .never
             scrollView.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(scrollView)
             NSLayoutConstraint.activate([
@@ -135,7 +136,7 @@ class HomeViewController: UIViewController {
 
         private func makeHeader() -> UIView {
             let container = UIView()
-            container.heightAnchor.constraint(equalToConstant: 70).isActive = true
+            container.heightAnchor.constraint(equalToConstant: 110).isActive = true
 
             let logo = UIImageView()
             logo.image = UIImage(named: "logo-home")
@@ -145,7 +146,7 @@ class HomeViewController: UIViewController {
 
             NSLayoutConstraint.activate([
                 logo.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: -8),
-                logo.topAnchor.constraint(equalTo: container.topAnchor),
+                logo.topAnchor.constraint(equalTo: container.topAnchor, constant: 50),
                 logo.heightAnchor.constraint(equalToConstant: 120),
                 logo.widthAnchor.constraint(equalToConstant: 160)
             ])
