@@ -26,7 +26,8 @@ class TabBarController: UITabBarController {
         profileVC.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "profile"), selectedImage: UIImage(named: "profileSelected"))
         let navHome = UINavigationController(rootViewController: homeVC)
         let navSearch = UINavigationController(rootViewController: searchVC)
-        setViewControllers([navHome, navSearch, favouriteVC, profileVC], animated: true)
+        let navProfile = UINavigationController(rootViewController: profileVC)
+        setViewControllers([navHome, navSearch, favouriteVC, navProfile], animated: true)
     }
 
 }
