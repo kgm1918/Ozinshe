@@ -6,44 +6,51 @@
 //
 
 import UIKit
+import SVProgressHUD
+import SwiftyJSON
+import Alamofire
 
 class DetailViewController: UIViewController {
+    var descriptionLabel: UILabel!
+    var descriptionContainer: UIView!
     var movie: Movie?
     var isExpanded = false
     var fadeView: UIView!
     var moreButton : UIButton!
     var scrollView = UIScrollView()
     var contentStackView = UIStackView()
-    let popularMovies: [Movie] = [
-        Movie(title: "", imageName: "aidar", movietitle: "Айдар", description: "Мультсериал", cardType: 3),
-        Movie(title: "", imageName: "samruk", movietitle: "Суперкөлік Самұрық", description: "Мультсериал", cardType: 3),
-        Movie(title: "", imageName: "kanikul", movietitle: "Каникулы off-line 2", description: "Телехикая", cardType: 3)
-    ]
-    let screenshots : [Movie] = [
-        Movie(title: "", imageName: "firstscreen", movietitle: "", description: "", cardType: 4),
-        Movie(title: "", imageName: "secondscreen", movietitle: "", description: "", cardType: 4)
-    ]
+    var similarMovies: [Movie] = []
+    var screenshots : [Screenshot] = []
     
     lazy var backgroundPicture : UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: movie!.imageName)
+//        imageView.image = UIImage(named: movie!.imageName)
+        if let url = URL(string: movie!.imageName) {
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                if let data = data, error == nil {
+                    DispatchQueue.main.async {
+                        imageView.image = UIImage(data: data)
+                    }
+                }
+            }.resume()
+        }
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     lazy var whiteView : UIView = {
         let whiteview = UIView()
-        whiteview.backgroundColor = .white
+        whiteview.backgroundColor = UIColor(named: "FFFFFF")
         whiteview.layer.cornerRadius = 32
         whiteview.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
         whiteview.addSubview(scrollView)
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: whiteview.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: whiteview.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: whiteview.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: whiteview.bottomAnchor)
+            scrollView.bottomAnchor.constraint(equalTo: whiteview.safeAreaLayoutGuide.bottomAnchor)
+
         ])
         contentStackView.axis = .vertical
         contentStackView.spacing = 20
@@ -51,14 +58,14 @@ class DetailViewController: UIViewController {
         scrollView.addSubview(contentStackView)
 
         NSLayoutConstraint.activate([
-            contentStackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 10),
+            contentStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             contentStackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             contentStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32)
         ])
         let title = UILabel()
-        title.text = movie?.movietitle
+        title.text = movie?.movieTitle
         title.font = UIFont(name: "SFProDisplay-Bold", size: 24)
         title.translatesAutoresizingMaskIntoConstraints = false
         contentStackView.addArrangedSubview(title)
@@ -67,7 +74,14 @@ class DetailViewController: UIViewController {
             title.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 24)
         ])
         let briefInfo = UILabel()
-        briefInfo.text = "2020 • Телехикая • 5 сезон, 46 серия, 7 мин"
+        let year = String(movie!.year)
+        let movieType = movie!.categories.first?.name ?? ""
+        let seasonCount = String(movie!.seasonCount)
+        let seriesCount = String(movie!.seriesCount)
+        let time = String(movie!.timing)
+
+        briefInfo.text = "\(year) • \(movieType) • \(seasonCount) сезон, \(seriesCount) серия, \(time) мин"
+
         briefInfo.font = UIFont(name: "SFProDisplay-Semibold", size: 12)
         briefInfo.textColor = UIColor(named: "9CA3AF")
         briefInfo.translatesAutoresizingMaskIntoConstraints = false
@@ -80,13 +94,14 @@ class DetailViewController: UIViewController {
         let descriptionContainer = UIView()
         descriptionContainer.translatesAutoresizingMaskIntoConstraints = false
         contentStackView.addArrangedSubview(descriptionContainer)
-        let description = UILabel()
-        description.text = "Шытырман оқиғалы мультсериал Елбасының «Ұлы даланың жеті қыры» бағдарламасы аясында жүзеге асырылған. Мақалада қызғалдақтардың отаны Қазақстан екені айтылады. Ал, жоба қызғалдақтардың отаны – Алатау баурайы екенін анимация тілінде дәлелдей түседі."
-        description.font = UIFont(name: "SFProDisplay-Regular", size: 14)
-        description.textColor = UIColor(named: "9CA3AF")
-        description.numberOfLines = 0
-        description.translatesAutoresizingMaskIntoConstraints = false
-        descriptionContainer.addSubview(description)
+        descriptionLabel = UILabel()
+//        description.text = "Шытырман оқиғалы мультсериал Елбасының «Ұлы даланың жеті қыры» бағдарламасы аясында жүзеге асырылған. Мақалада қызғалдақтардың отаны Қазақстан екені айтылады. Ал, жоба қызғалдақтардың отаны – Алатау баурайы екенін анимация тілінде дәлелдей түседі."
+        descriptionLabel.text = movie?.desc
+        descriptionLabel.font = UIFont(name: "SFProDisplay-Regular", size: 14)
+        descriptionLabel.textColor = UIColor(named: "9CA3AF")
+        descriptionLabel.numberOfLines = 3
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionContainer.addSubview(descriptionLabel)
         
         fadeView = UIView()
         fadeView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,11 +120,12 @@ class DetailViewController: UIViewController {
             descriptionContainer.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 24),
             descriptionContainer.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -24),
             
-            description.topAnchor.constraint(equalTo: descriptionContainer.topAnchor),
-            description.leadingAnchor.constraint(equalTo: descriptionContainer.leadingAnchor),
-            description.trailingAnchor.constraint(equalTo: descriptionContainer.trailingAnchor),
-            description.bottomAnchor.constraint(equalTo: descriptionContainer.bottomAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: descriptionContainer.topAnchor),
+            descriptionLabel.leadingAnchor.constraint(equalTo: descriptionContainer.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: descriptionContainer.trailingAnchor),
+            descriptionLabel.bottomAnchor.constraint(equalTo: descriptionContainer.bottomAnchor),
             
+            fadeView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: -40),
             fadeView.leadingAnchor.constraint(equalTo: descriptionContainer.leadingAnchor),
             fadeView.trailingAnchor.constraint(equalTo: descriptionContainer.trailingAnchor),
             fadeView.bottomAnchor.constraint(equalTo: descriptionContainer.bottomAnchor),
@@ -128,7 +144,8 @@ class DetailViewController: UIViewController {
         directorLabel.textColor = UIColor(named: "4B5563")
         directorLabel.translatesAutoresizingMaskIntoConstraints = false
         let directorName = UILabel()
-        directorName.text = "Бақдәулет Әлімбеков"
+//        directorName.text = "Бақдәулет Әлімбеков"
+        directorName.text = movie?.director
         directorName.font = UIFont(name: "SFProDisplay-Regular", size: 14)
         directorName.textColor = UIColor(named: "9CA3AF")
         directorName.translatesAutoresizingMaskIntoConstraints = false
@@ -138,7 +155,8 @@ class DetailViewController: UIViewController {
         producerLabel.textColor = UIColor(named: "4B5563")
         producerLabel.translatesAutoresizingMaskIntoConstraints = false
         let producerName = UILabel()
-        producerName.text = "Сандуғаш Кенжебаева"
+//        producerName.text = "Сандуғаш Кенжебаева"
+        producerName.text = movie?.producer
         producerName.font = UIFont(name: "SFProDisplay-Regular", size: 14)
         producerName.textColor = UIColor(named: "9CA3AF")
         producerName.translatesAutoresizingMaskIntoConstraints = false
@@ -168,13 +186,17 @@ class DetailViewController: UIViewController {
         ])
         let seriesSection = makeSeriesSection()
         contentStackView.addArrangedSubview(seriesSection)
-        let firstSectionCards = screenshots.map {
-            makeCard(from: $0)
+        let firstSectionCards = screenshots.map { screenshot in
+            let someMovie = Movie()
+            someMovie.poster_link = screenshot.link
+            someMovie.cardType = 4
+            return MovieCardView(item: someMovie, onTap: {})
         }
         let firstSection = makeHorizontalSection(title: "Скриншоттар", cards: firstSectionCards, type: 4)
         contentStackView.addArrangedSubview(firstSection)
-        let secondSectionCards = popularMovies.map {
-            makeCard(from: $0)
+        let secondSectionCards = similarMovies.map { movie in
+            MovieCardView(item: movie, onTap: {
+            })
         }
         let secondSection = makeHorizontalSection(title: "Ұқсас телехикаялар", cards: secondSectionCards, type: 3)
         contentStackView.addArrangedSubview(secondSection)
@@ -186,9 +208,11 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         navigationController?.navigationBar.tintColor = .white
         navigationItem.backButtonTitle = ""
+        screenshots = movie?.screenshots ?? []
+        print("Screenshots count: \(screenshots.count)")
         view.addSubview(backgroundPicture)
         NSLayoutConstraint.activate([
             backgroundPicture.topAnchor.constraint(equalTo: view.topAnchor),
@@ -201,21 +225,25 @@ class DetailViewController: UIViewController {
         playButton.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
         playButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(playButton)
-        let add = makeIconWithLabel(imageName: "Bookmark", text: "Тізімге қосу")
-        let share = makeIconWithLabel(imageName: "Share", text: "Бөлісу")
-        view.addSubview(add)
-        view.addSubview(share)
+        
+        let addButton = makeVerticalButton(imageName: "Bookmark", text: "Тізімге қосу", selector: #selector(addToFavorite))
+        let shareButton = makeVerticalButton(imageName: "Share", text: "Бөлісу", selector: #selector(shareTapped))
+
+        view.addSubview(addButton)
+        view.addSubview(shareButton)
+
         NSLayoutConstraint.activate([
             playButton.topAnchor.constraint(equalTo: backgroundPicture.topAnchor, constant: 200),
             playButton.centerXAnchor.constraint(equalTo: backgroundPicture.centerXAnchor),
-            
-            add.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
-            add.trailingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: -20),
+                     
+            addButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
+            addButton.trailingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: -20),
 
-            share.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
-            share.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 23)
+            shareButton.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
+            shareButton.leadingAnchor.constraint(equalTo: playButton.trailingAnchor, constant: 23)
         ])
-        
+
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(whiteView)
         NSLayoutConstraint.activate([
             whiteView.topAnchor.constraint(equalTo: view.topAnchor, constant: 320),
@@ -224,18 +252,12 @@ class DetailViewController: UIViewController {
             whiteView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-       
+        downloadSimilarMovies()
+        print("Screenshots count: \(screenshots.count)")
+
     }
     
-    private func makeCard(from movie: Movie) -> UIView {
-        return MovieCardView(movie: movie) { [weak self] in
-               guard let self = self else { return }
-               let detailVC = DetailViewController()
-               detailVC.movie = movie
-               self.navigationController?.pushViewController(detailVC, animated: true)
-          
-           }
-    }
+
     private func makeHorizontalSection(title: String, cards : [UIView], type: Int) -> UIView {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
@@ -328,7 +350,8 @@ class DetailViewController: UIViewController {
 
         let seasonLabel: UILabel = {
             let label = UILabel()
-            label.text = "5 сезон, 46 серия"
+//            label.text = "5 сезон, 46 серия"
+            label.text = "\(movie?.seasonCount ?? 0) сезон, \(movie?.seriesCount ?? 0) серия"
             label.font = UIFont(name: "SFProDisplay-Semibold", size: 12)
             label.textColor = UIColor(named: "9CA3AF")
             return label
@@ -366,9 +389,10 @@ class DetailViewController: UIViewController {
         fadeView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         
         let gradient = CAGradientLayer()
+        let gradientColor = UIColor(named: "FFFFFF")
         gradient.colors = [
-            UIColor.white.withAlphaComponent(1.0).cgColor,
-            UIColor.white.withAlphaComponent(0.0).cgColor
+            gradientColor!.withAlphaComponent(1.0).cgColor,
+            gradientColor!.withAlphaComponent(0.0).cgColor
         ]
         gradient.locations = [0.0, 1.0]
         gradient.startPoint = CGPoint(x: 0.5, y: 1.0)
@@ -379,40 +403,127 @@ class DetailViewController: UIViewController {
     }
     
     
-    func makeIconWithLabel(imageName: String, text: String) -> UIStackView {
-        let imageView = UIImageView(image: UIImage(named: imageName))
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 24).isActive = true
+    func makeVerticalButton(imageName: String, text: String, selector: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(text, for: .normal)
+        button.setTitleColor(UIColor(named: "D1D5DB"), for: .normal)
+        button.titleLabel?.font = UIFont(name: "SFProDisplay-Semibold", size: 12)
+        button.setImage(UIImage(named: imageName), for: .normal)
         
-        let label = UILabel()
-        label.text = text
-        label.font = UIFont(name: "SFProDisplay-Semibold", size: 12)
-        label.textColor = UIColor(named: "D1D5DB")
-        label.textAlignment = .center
+        button.tintColor = UIColor(named: "D1D5DB")
+        button.imageView?.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
         
-        let stack = UIStackView(arrangedSubviews: [imageView, label])
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 4
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
+        button.titleLabel?.textAlignment = .center
+        button.contentHorizontalAlignment = .center
+        
+        let spacing: CGFloat = 4
+        button.titleEdgeInsets = UIEdgeInsets(top: spacing, left: -24, bottom: -24, right: 0)
+        button.imageEdgeInsets = UIEdgeInsets(top: -12, left: 0, bottom: 12, right: -button.titleLabel!.intrinsicContentSize.width)
+
+        button.addTarget(self, action: selector, for: .touchUpInside)
+        
+        return button
     }
+
     
-    @objc func moreButtonTapped(){
+    @objc func moreButtonTapped() {
         isExpanded.toggle()
         fadeView.isHidden = isExpanded
-        if isExpanded {
-            moreButton.setTitle("Жасыру", for: .normal)
-        } else {
-            moreButton.setTitle("Толығырақ", for: .normal)
+        descriptionLabel.numberOfLines = isExpanded ? 0 : 3
+        moreButton.setTitle(isExpanded ? "Жасыру" : "Толығырақ", for: .normal)
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
         }
     }
     
     @objc func playButtonTapped(){
-        let episodesVC = EpisodesTableViewController()
+        let episodesVC = EpisodesController()
+        episodesVC.movie = movie!
         self.navigationController?.pushViewController(episodesVC, animated: true)
+    }
+    
+    func downloadSimilarMovies() {
+        SVProgressHUD.show()
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(Storage.sharedInstance.accessToken)"
+        ]
+        let url = "\(Urls.GET_SIMILAR)\(movie?.id ?? 0)"
+        print("URL:", url)
+
+        AF.request(url, method: .get, headers: headers).responseData { response in
+            
+            SVProgressHUD.dismiss()
+            var resultString = ""
+            if let data = response.data {
+                resultString = String(data: data, encoding: .utf8)!
+//                print("checkTHIS", resultString)
+            }
+            
+            if response.response?.statusCode == 200 {
+                let json = JSON(response.data!)
+//                print("this", json)
+                if let array = json.array {
+                    for item in array {
+                            let movie = Movie(json: item)
+                            self.similarMovies.append(movie)
+                        }
+                    }
+//                print("similarMovies.count:", self.similarMovies.count)
+                }
+                
+                else {
+                    var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+                if let sCode = response.response?.statusCode {
+                    print("Status Code: \(sCode)")
+                    ErrorString = ErrorString + "\(sCode)"
+                }
+                ErrorString = ErrorString + "\(resultString)"
+                SVProgressHUD.showError(withStatus: "\(ErrorString)")
+                }
+            }
+        }
+    
+    @objc func addToFavorite() {
+           var method = HTTPMethod.post
+            if movie!.favorite {
+               method = .delete
+           }
+           
+           SVProgressHUD.show()
+           
+           let headers: HTTPHeaders = [
+               "Authorization": "Bearer \(Storage.sharedInstance.accessToken)"
+           ]
+           
+            let parameters = ["movieId": movie?.id] as [String : Any]
+           
+           AF.request(Urls.FAVORITE_URL, method: method, parameters: parameters, encoding: JSONEncoding.default, headers: headers).responseData { response in
+               
+               SVProgressHUD.dismiss()
+               var resultString = ""
+               if let data = response.data {
+                   resultString = String(data: data, encoding: .utf8)!
+                   print(resultString)
+                            }
+                
+                if response.response?.statusCode == 200 || response.response?.statusCode == 201 {
+
+                    self.movie!.favorite.toggle()
+                    NotificationCenter.default.post(name: NSNotification.Name("FavoritesUpdated"), object: nil)
+                    
+                }
+            }
+        }
+    @objc func shareTapped(){
+            let text = "\(movie!.name) \n\(movie!.desc)"
+           let image = backgroundPicture.image
+           let shareAll = [text, image!] as [Any]
+           let activityViewController = UIActivityViewController(activityItems: shareAll, applicationActivities: nil)
+           activityViewController.popoverPresentationController?.sourceView = self.view
+           self.present(activityViewController, animated: true, completion: nil)
     }
     
 }

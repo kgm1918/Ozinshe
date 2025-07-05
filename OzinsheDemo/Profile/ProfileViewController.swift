@@ -56,10 +56,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         navigationItem.title = "Профиль"
         navigationItem.backButtonTitle = ""
-        navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.tintColor = UIColor(named: "blackcolor")
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: exitButton)
         setupUI()
     }
@@ -135,12 +135,19 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         case .switchType:
             let titles = ["Хабарландырулар", "Қараңғы режим"]
             cell.textLabel?.text = titles[indexPath.row]
+            
             let toggle = UISwitch()
-            toggle.isOn = false
             toggle.tag = indexPath.row
+            toggle.onTintColor = UIColor(red: 0.702, green: 0.463, blue: 0.969, alpha: 1)
+            toggle.thumbTintColor = UIColor(red: 0.9, green: 0.91, blue: 0.92, alpha: 1)
+            toggle.addTarget(self, action: #selector(switchDidChange(_:)), for: .valueChanged)
+            
+            if indexPath.row == 1 {
+                toggle.isOn = DefaultsManager.shared.bool(for: .isDarkTheme)
+            }
+            
             cell.accessoryView = toggle
             cell.selectionStyle = .none
-
         }
         let separator = UIView()
         separator.backgroundColor = UIColor(named: "D1D5DB")
@@ -162,5 +169,14 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         logoutVC.modalTransitionStyle = .crossDissolve
         present(logoutVC, animated: true)
     }
+    
+    @objc func switchDidChange(_ sender: UISwitch) {
+        if sender.tag == 1 {
+            DefaultsManager.shared.set(sender.isOn, for: .isDarkTheme)
+            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = sender.isOn ? .dark : .light
+        }
+    }
+
+  
     
 }

@@ -3,6 +3,16 @@
     {
       "filename" : "ÖZINŞE-ге қош келдің!.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "ÖZINŞE-ге қош келдің! 1.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

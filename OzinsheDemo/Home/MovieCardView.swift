@@ -8,16 +8,19 @@
 import Foundation
 import UIKit
 
+
+
 class MovieCardView: UIView {
 
     var onTap: (() -> Void)?
 
-    init(movie: Movie, onTap: (() -> Void)? = nil) {
+    init(item: CardDisplayable, onTap: (() -> Void)? = nil) {
         super.init(frame: .zero)
         self.onTap = onTap
-        setupView(with: movie)
+        setupView(with: item)
         setupGesture()
     }
+
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -33,9 +36,18 @@ class MovieCardView: UIView {
         onTap?()
     }
 
-    private func setupView(with movie: Movie) {
+    private func setupView(with item: CardDisplayable) {
         translatesAutoresizingMaskIntoConstraints = false
-        let imageView = UIImageView(image: UIImage(named: movie.imageName))
+        let imageView = UIImageView()
+        if let url = URL(string: item.imageName) {
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                if let data = data, error == nil {
+                    DispatchQueue.main.async {
+                        imageView.image = UIImage(data: data)
+                    }
+                }
+            }.resume()
+        }
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
         imageView.clipsToBounds = true
@@ -47,10 +59,10 @@ class MovieCardView: UIView {
         var titleFontSize: CGFloat = 14
         var showTitle = true
 
-        switch movie.cardType {
+        switch item.cardType {
         case 1:
             let tagLabel = UILabel()
-            tagLabel.text = movie.title
+            tagLabel.text = item.title
             tagLabel.textColor = .white
             tagLabel.font = UIFont(name: "SFProDisplay-Semibold", size: 12)
             tagLabel.backgroundColor = UIColor(named: "7E2DFC")
@@ -82,7 +94,7 @@ class MovieCardView: UIView {
             height = 112
             showTitle = false
             let label = UILabel()
-            label.text = movie.title
+            label.text = item.movieTitle
             label.textColor = .white
             label.font = UIFont(name: "SFProDisplay-Semibold", size: 14)
             label.textAlignment = .center
@@ -107,13 +119,13 @@ class MovieCardView: UIView {
 
         if showTitle {
             let titleLabel = UILabel()
-            titleLabel.text = movie.movietitle
+            titleLabel.text = item.movieTitle
             titleLabel.numberOfLines = 2
             titleLabel.font = UIFont(name: "SFProDisplay-Bold", size: titleFontSize)
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
             let descLabel = UILabel()
-            descLabel.text = movie.description
+            descLabel.text = item.subtitle
             descLabel.font = UIFont(name: "SFProDisplay-Regular", size: 12)
             descLabel.textColor = UIColor(named: "9CA3AF")
             descLabel.numberOfLines = 2
@@ -132,12 +144,12 @@ class MovieCardView: UIView {
                 descLabel.widthAnchor.constraint(equalToConstant: width),
                 descLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
             ])
-            
+
             NSLayoutConstraint.activate([
                 self.widthAnchor.constraint(equalToConstant: width),
                 self.heightAnchor.constraint(equalToConstant: showTitle ? (height + 60) : height)
             ])
-
         }
     }
+
 }

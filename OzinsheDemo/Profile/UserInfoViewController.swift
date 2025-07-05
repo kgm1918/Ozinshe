@@ -7,8 +7,12 @@
 
 import UIKit
 import SnapKit
+import Alamofire
+import SwiftyJSON
+import SVProgressHUD
 
 class UserInfoViewController: UIViewController {
+    var userID: Int?
     lazy var nameLabel : UILabel = {
         let label = UILabel()
         label.text = "Сіздің атыңыз"
@@ -59,6 +63,7 @@ class UserInfoViewController: UIViewController {
     
     lazy var saveButton : UIButton = {
         let button = UIButton()
+        button.addTarget(self, action: #selector(saveButtonAction), for: .touchUpInside)
         button.setTitle("Өзгерістерді сақтау", for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProDisplay-Semibold", size: 16)
         button.setTitleColor(.white, for: .normal)
@@ -69,9 +74,10 @@ class UserInfoViewController: UIViewController {
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         navigationItem.title = "Жеке деректер"
         setupUI()
+        downloadPersonalInfo()
     }
     
     func addLine(textfield: UITextField){
@@ -158,6 +164,81 @@ class UserInfoViewController: UIViewController {
         view.endEditing(true)
     }
     
+    func downloadPersonalInfo() {
+           SVProgressHUD.show()
+           let headers: HTTPHeaders = ["Authorization": "Bearer \(Storage.sharedInstance.accessToken)"]
+           
+           AF.request(Urls.UPLOAD_USER_INFO, method: .get, headers: headers).responseData { response in
+               
+           SVProgressHUD.dismiss()
+           var resultString = ""
+           if let data = response.data {
+               resultString = String(data: data, encoding: .utf8)!
+               print(resultString)
+           }
+               
+           if response.response?.statusCode == 200 {
+               let json = JSON(response.data!)
+               let name = json ["name"]
+               let email = json ["user"]["email"]
+               let phoneNumber = json["phoneNumber"]
+               let birthDate = json ["birthDate"]
+               self.userID = json ["id"].int
+               self.nameTextField.text = name.stringValue
+               self.emailTextField.text = email.stringValue
+               self.phoneTextField.text = phoneNumber.stringValue
+               self.birthdayTextField.text = birthDate.stringValue
+           } else {
+               var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+               if let sCode = response.response?.statusCode {
+                   print("Status Code: \(sCode)")
+                   ErrorString = ErrorString + "\(sCode)"
+               }
+               ErrorString = ErrorString + "\(resultString)"
+               SVProgressHUD.showError(withStatus: "\(ErrorString)")
+               }
+       }
+   }
     
+    @objc func saveButtonAction() {
+       let updatedName = nameTextField.text ?? ""
+       let updatedEmail = emailLabel.text ?? ""
+       let updatedBirth = birthdayTextField.text ?? ""
+       let updatedPhone = phoneTextField.text ?? ""
+       
+       updateUserInfo(updatedName: updatedName, updatedEmail: updatedEmail, updatedBirth: updatedBirth, updatedPhone: updatedPhone)
+       }
 
+    func updateUserInfo(updatedName: String, updatedEmail: String, updatedBirth: String, updatedPhone: String) {
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(Storage.sharedInstance.accessToken)"]
+        
+        let parameters: [String: Any] = [
+            "name": updatedName,
+            "email": updatedEmail,
+            "phoneNumber": updatedPhone,
+            "birthDate": updatedBirth,
+        ]
+        
+        AF.request(Urls.UPLOAD_USER_INFO, method: .put, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .responseData { response in
+                SVProgressHUD.dismiss()
+                var resultString = ""
+                if let data = response.data {
+                    resultString = String(data: data, encoding: .utf8)!
+                    print(resultString)
+                }
+                
+                if response.response?.statusCode == 200 {
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+                    if let sCode = response.response?.statusCode {
+                        print("Status Code: \(sCode)")
+                        ErrorString = ErrorString + "\(sCode)"
+                    }
+                    ErrorString = ErrorString + "\(resultString)"
+                    SVProgressHUD.showError(withStatus: "\(ErrorString)")
+                }
+            }
+    }
 }

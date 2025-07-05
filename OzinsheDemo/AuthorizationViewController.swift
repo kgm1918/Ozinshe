@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import SwiftyJSON
+import Alamofire
+import SVProgressHUD
 
 class AuthorizationViewController: UIViewController {
     lazy var backButton : UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -64,7 +67,10 @@ class AuthorizationViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -84,7 +90,10 @@ class AuthorizationViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         let containerForButtonView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "Show"), for: .normal)
@@ -117,6 +126,7 @@ class AuthorizationViewController: UIViewController {
         button.backgroundColor = UIColor(named: "7E2DFC")
         button.layer.cornerRadius = 12
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
         return button
     }()
     
@@ -124,7 +134,7 @@ class AuthorizationViewController: UIViewController {
         let label = UILabel()
         label.text = "Аккаунтыңыз жоқ па?"
         label.font = UIFont(name: "SFProDisplay-Regular", size: 14)
-        label.textColor = UIColor(named: "6B7280")
+        label.textColor = UIColor(named: "colorquestion")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -152,10 +162,11 @@ class AuthorizationViewController: UIViewController {
     lazy var appleIDButton : UIButton = {
         let button = UIButton()
         button.setTitle(" Apple ID-мен тіркеліңіз", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(named: "applegoogletext"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProDisplay-Semibold", size: 14)
         button.layer.borderColor = UIColor(named: "D1D5DB")?.cgColor
         button.layer.borderWidth = 0.5
+        button.backgroundColor = UIColor(named: "applegoogle")
         button.layer.cornerRadius = 8
         button.setImage(UIImage(named: "apple-logo"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -165,11 +176,12 @@ class AuthorizationViewController: UIViewController {
     lazy var googleButton : UIButton = {
         let button = UIButton()
         button.setTitle(" Google-мен тіркеліңіз", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(named: "applegoogletext"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProDisplay-Semibold", size: 14)
         button.layer.borderColor = UIColor(named: "D1D5DB")?.cgColor
         button.layer.borderWidth = 0.5
         button.layer.cornerRadius = 8
+        button.backgroundColor = UIColor(named: "applegoogle")
         button.setImage(UIImage(named: "google-logo"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -177,7 +189,7 @@ class AuthorizationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         view.addSubview(salemLabel)
         view.addSubview(backButton)
@@ -267,6 +279,46 @@ class AuthorizationViewController: UIViewController {
         let signUpVC = RegistrationViewController()
         signUpVC.modalPresentationStyle = .fullScreen
         present(signUpVC, animated: true)
+    }
+    
+    @objc func signInTapped() {
+            let email = emailTextField.text!
+            let password = passwordTextField.text!
+            
+            SVProgressHUD.show()
+            let parameters = ["email" : email, "password" : password]
+            AF.request(Urls.SIGN_IN_URL, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseData { response in
+                SVProgressHUD.dismiss()
+                var resultString = ""
+                if let data = response.data {
+                    resultString = String(data: data, encoding: .utf8)!
+                    print(resultString)
+                }
+                if response.response?.statusCode == 200 {
+                    let json = JSON(response.data!)
+                    print("JSON: \(json)")
+                    if let token = json["accessToken"].string {
+                        Storage.sharedInstance.accessToken = token
+                        UserDefaults.standard.set(token, forKey: "accessToken")
+                        self.startApp()
+                    } else {
+                            SVProgressHUD.showError(withStatus: NSLocalizedString("CONNECTION_ERROR", comment: ""))
+                    }
+                    } else {
+                            var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+                        if let sCode = response.response?.statusCode {
+                            print("Status Code: \(sCode)")
+                            ErrorString = ErrorString + "\(sCode)"
+                        }
+                        ErrorString = ErrorString + "\(resultString)"
+                        SVProgressHUD.showError(withStatus: "\(ErrorString)")
+                        }
+                    }
+            }
+    func startApp(){
+        let tabViewController = TabBarController()
+        tabViewController.modalPresentationStyle = .fullScreen
+        self.present(tabViewController, animated: true, completion: nil)
     }
 
 }

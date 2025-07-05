@@ -45,13 +45,13 @@ class EpisodeTableViewCell: UITableViewCell {
             make.right.equalToSuperview().inset(24)
             make.height.equalTo(179)
         }
-
+        
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(episodeScreen.snp.bottom).offset(8)
             make.left.equalToSuperview().inset(24)
             make.right.equalToSuperview().inset(24)
         }
-      
+        
         bottomView.snp.makeConstraints { make in
             make.height.equalTo(1)
             make.left.equalToSuperview().inset(24)
@@ -63,10 +63,18 @@ class EpisodeTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError()
     }
-
-    func configure(title: String, image: UIImage?) {
-        titleLabel.text = title
-        episodeScreen.image = image
+    
+    func configure(episodeNumber: Int, imageLink: String) {
+        titleLabel.text = "\(episodeNumber)-ші бөлім"
+        if let url = URL(string: imageLink) {
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                if let data = data, error == nil {
+                    DispatchQueue.main.async {
+                        self.episodeScreen.image = UIImage(data: data)
+                    }
+                }
+            }.resume()
+        }
+        
     }
-
 }

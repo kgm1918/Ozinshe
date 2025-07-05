@@ -6,13 +6,16 @@
 //
 
 import UIKit
+import SVProgressHUD
+import Alamofire
+import SwiftyJSON
 
 class RegistrationViewController: UIViewController {
 
     lazy var backButton : UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -65,7 +68,10 @@ class RegistrationViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -85,7 +91,10 @@ class RegistrationViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         let containerForButtonView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "Show"), for: .normal)
@@ -123,7 +132,10 @@ class RegistrationViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         let containerForButtonView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "Show"), for: .normal)
@@ -147,6 +159,7 @@ class RegistrationViewController: UIViewController {
         button.backgroundColor = UIColor(named: "7E2DFC")
         button.layer.cornerRadius = 12
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         return button
     }()
     
@@ -154,7 +167,7 @@ class RegistrationViewController: UIViewController {
         let label = UILabel()
         label.text = "Сізде аккаунт бар па?"
         label.font = UIFont(name: "SFProDisplay-Regular", size: 14)
-        label.textColor = UIColor(named: "6B7280")
+        label.textColor = UIColor(named: "colorquestion")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -172,7 +185,7 @@ class RegistrationViewController: UIViewController {
   
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         view.addSubview(signUpLabel)
         view.addSubview(backButton)
@@ -262,6 +275,58 @@ class RegistrationViewController: UIViewController {
         signInVC.modalPresentationStyle = .fullScreen
         present(signInVC, animated: true)
     }
-
-
+    
+    @objc func signUpTapped(){
+        let signUpEmail = emailTextField.text!
+        let signUpPassword = passwordTextField.text!
+        let confirmPassword = secondPasswordTextField.text!
+        
+        if signUpPassword == confirmPassword {
+            SVProgressHUD.show()
+            let parameters = ["email" : signUpEmail, "password" : signUpPassword]
+            AF.request(Urls.SIGN_UP_URL, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseData { response in
+                SVProgressHUD.dismiss()
+                var resultString = ""
+                if let data = response.data {
+                    resultString = String(data: data, encoding: .utf8)!
+                    print(resultString)
+                }
+                if response.response?.statusCode == 200 {
+                    let json = JSON(response.data!)
+                    print("JSON: \(json)")
+                    if let token = json["accessToken"].string {
+                        Storage.sharedInstance.accessToken = token
+                        UserDefaults.standard.set(token, forKey: "accessToken")
+                        self.startApp()
+                    } else {
+                        SVProgressHUD.showError(withStatus: NSLocalizedString("CONNECTION_ERROR", comment: ""))
+                    }
+                }   else {
+                        var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+                    if let sCode = response.response?.statusCode {
+                        print("Status Code: \(sCode)")
+                        ErrorString = ErrorString + "\(sCode)"
+                    }
+                    ErrorString = ErrorString + "\(resultString)"
+                    SVProgressHUD.showError(withStatus: "\(ErrorString)")
+                    }
+                }
+            print("Registration is successful")
+        } else {
+            showAlert(message: "Try again")
+        }
+        }
+    func showAlert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    func startApp(){
+        let tabViewController = TabBarController()
+        tabViewController.modalPresentationStyle = .fullScreen
+        self.present(tabViewController, animated: true, completion: nil)
+    }
 }
+
+
+

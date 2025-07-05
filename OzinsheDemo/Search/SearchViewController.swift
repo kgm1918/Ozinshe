@@ -7,6 +7,9 @@
 
 import UIKit
 import SnapKit
+import SVProgressHUD
+import Alamofire
+import SwiftyJSON
 
 class LeftAlignedCollectionViewFlowLayout : UICollectionViewFlowLayout {
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -31,11 +34,9 @@ class LeftAlignedCollectionViewFlowLayout : UICollectionViewFlowLayout {
 
 class SearchViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDataSource, UITableViewDelegate {
     
-    var categories = ["Телехикая", "Ситком", "Көркем фильм", "Мультфильм", "Мультсериал", "Аниме", "Тв-бағдарлама және реалити-шоу", "Деректі фильм", "Музыка", "Шетел фильмдері"]
-    
-    var movies : [Movie] = [Movie(title: "", imageName: "aidar", movietitle: "Айдар", description: "Мультсериал", cardType: 3),
-                            Movie(title: "", imageName: "samruk", movietitle: "Суперкөлік Самұрық", description: "Мультсериал", cardType: 3),
-                            Movie(title: "", imageName: "kanikul", movietitle: "Каникулы off-line 2", description: "Телехикая", cardType: 3)]
+    var categories : [Category] = []
+//    ["Телехикая", "Ситком", "Көркем фильм", "Мультфильм", "Мультсериал", "Аниме", "Тв-бағдарлама және реалити-шоу", "Деректі фильм", "Музыка", "Шетел фильмдері"]
+    var movies : [Movie] = []
     
     lazy var searchTextField : UITextField = {
         let textfield = UITextField()
@@ -90,6 +91,7 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
         layout.itemSize = CGSize(width: 128, height: 34)
         layout.estimatedItemSize.width = 100
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = UIColor(named: "collectionViewColor")
         collectionView.register(SearchCollectionViewCell.self, forCellWithReuseIdentifier: "SearchCollectionViewCell")
         collectionView.contentInsetAdjustmentBehavior = .automatic
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -109,9 +111,9 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         navigationItem.title = "Іздеу"
-        navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.tintColor = UIColor(named: "blackcolor")
         collectionView.delegate = self
         collectionView.dataSource = self
         
@@ -121,6 +123,44 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
         exitButton.isHidden = true
         hideKeyboardWhenTappedAround()
         tableView.isHidden = true
+        downloadCategories()
+    }
+    
+    func downloadCategories(){
+        SVProgressHUD.show()
+        let headers: HTTPHeaders = [
+            "Authorization" : "Bearer \(Storage.sharedInstance.accessToken)"]
+        AF.request(Urls.CATEGORIES_URL, method: .get, headers: headers).responseData { response in
+            SVProgressHUD.dismiss()
+            var resultString = ""
+            if let data = response.data {
+                resultString = String(data: data, encoding: .utf8)!
+                print(resultString)
+            }
+            if response.response?.statusCode == 200 {
+                let json = JSON(response.data!)
+//                print("CATEGORY")
+//                print("JSON: \(json)")
+                if let array = json.array {
+                    for item in array {
+                        let category = Category(json: item)
+                        self.categories.append(category)
+                    }
+                    self.collectionView.reloadData()
+                } else {
+                    SVProgressHUD.showError(withStatus: NSLocalizedString("CONNECTION_ERROR", comment: ""))
+                }
+        }
+            else {
+                var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+            if let sCode = response.response?.statusCode {
+                print("Status Code: \(sCode)")
+                ErrorString = ErrorString + "\(sCode)"
+            }
+            ErrorString = ErrorString + "\(resultString)"
+            SVProgressHUD.showError(withStatus: "\(ErrorString)")
+            }
+        }
     }
     
     func downloadSearchMovies(){
@@ -128,8 +168,8 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
             categoriesLabel.text = "Санаттар"
             collectionView.isHidden = false
             tableView.isHidden = true
-//            movies.removeAll()
-//            tableView.reloadData()
+            movies.removeAll()
+            tableView.reloadData()
             exitButton.isHidden = true
             
             tableView.snp.remakeConstraints { make in
@@ -146,6 +186,41 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
             }
             tableView.isHidden = false
             exitButton.isHidden = false
+        }
+        SVProgressHUD.show()
+        let headers: HTTPHeaders = [
+            "Authorization" : "Bearer \(Storage.sharedInstance.accessToken)"]
+        let parameters = ["search" : searchTextField.text!]
+        AF.request(Urls.SEARCH_MOVIES_URL, method: .get, parameters: parameters, headers: headers).responseData { response in
+            SVProgressHUD.dismiss()
+            var resultString = ""
+            if let data = response.data {
+                resultString = String(data: data, encoding: .utf8)!
+                print(resultString)
+            }
+            if response.response?.statusCode == 200 {
+                let json = JSON(response.data!)
+//                print("JSON: \(json)")
+                if let array = json.array {
+                    self.movies.removeAll()
+                    self.tableView.reloadData()
+                    for item in array {
+                        let movie = Movie(json: item)
+                        self.movies.append(movie)
+                    }
+                    self.tableView.reloadData()
+                } else {
+                    SVProgressHUD.showError(withStatus: NSLocalizedString("CONNECTION_ERROR", comment: ""))
+                }
+            } else {
+                var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+            if let sCode = response.response?.statusCode {
+                print("Status Code: \(sCode)")
+                ErrorString = ErrorString + "\(sCode)"
+            }
+            ErrorString = ErrorString + "\(resultString)"
+            SVProgressHUD.showError(withStatus: "\(ErrorString)")
+            }
         }
         
     }
@@ -213,9 +288,18 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCollectionViewCell", for: indexPath) as! SearchCollectionViewCell
-        cell.label.text = categories[indexPath.row]
+        cell.label.text = categories[indexPath.row].name
         cell.backView.layer.cornerRadius = 8
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let categoryTableViewController = CategoryTableViewController()
+        categoryTableViewController.categoryID = categories[indexPath.row].id
+        categoryTableViewController.categoryName = categories[indexPath.row].name
+        navigationController?.show(categoryTableViewController, sender: self)
+        navigationItem.title = ""
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

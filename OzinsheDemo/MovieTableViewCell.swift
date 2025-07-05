@@ -12,7 +12,7 @@ class MovieTableViewCell: UITableViewCell {
     let identifier = "MovieTableCell"
     lazy var posterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "image")
+//        imageView.image = UIImage(named: "image")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 8
         imageView.clipsToBounds = true
@@ -21,7 +21,7 @@ class MovieTableViewCell: UITableViewCell {
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Қызғалдақтар мекені"
+//        label.text = "Қызғалдақтар мекені"
         label.font = UIFont(name: "SFProDisplay-Bold", size: 14)
         label.textColor = UIColor(named: "111827")
         return label
@@ -29,7 +29,7 @@ class MovieTableViewCell: UITableViewCell {
     
     lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "2020 • Телехикая • Мультфильм"
+//        label.text = "2020 • Телехикая • Мультфильм"
         label.font = UIFont(name: "SFProDisplay-Regular", size: 12)
         label.textColor = UIColor(named: "9CA3AF")
         return label
@@ -67,6 +67,7 @@ class MovieTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.backgroundColor = UIColor(named: "collectionViewColor")
         setupUI()
     }
     
@@ -113,10 +114,31 @@ class MovieTableViewCell: UITableViewCell {
     }
     
     func configure(with movie: Movie) {
-        titleLabel.text = movie.movietitle
-        subtitleLabel.text = movie.description
-        posterImageView.image = UIImage(named: movie.imageName)
+        titleLabel.text = movie.name
+        subtitleLabel.text = movie.subtitle
+        if let url = URL(string: movie.poster_link) {
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                if let data = data, error == nil {
+                    DispatchQueue.main.async {
+                        self.posterImageView.image = UIImage(data: data)
+                    }
+                }
+            }.resume()
+        }
     }
-
+    
+    func setData(movie: Movie) {
+        titleLabel.text = movie.name
+        subtitleLabel.text = movie.subtitle
+        if let url = URL(string: movie.poster_link) {
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                if let data = data, error == nil {
+                    DispatchQueue.main.async {
+                        self.posterImageView.image = UIImage(data: data)
+                    }
+                }
+            }.resume()
+        }
+    }
 
 }

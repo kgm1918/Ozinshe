@@ -11,7 +11,7 @@ class LogOutViewController: UIViewController {
     
     lazy var whiteView: UIView = {
         let whiteview = UIView()
-        whiteview.backgroundColor = .white
+        whiteview.backgroundColor = UIColor(named: "smallviewcolor")
         whiteview.layer.cornerRadius = 32
         whiteview.clipsToBounds = true
         return whiteview
@@ -112,6 +112,17 @@ class LogOutViewController: UIViewController {
         yesButton.setTitleColor(.white, for: .normal)
         noButton.backgroundColor = .clear
         noButton.setTitleColor(UIColor(named: "5415C6"), for: .normal)
+        UserDefaults.standard.removeObject(forKey: "accessToken")
+        DispatchQueue.main.async {
+            let rootVC = UINavigationController(rootViewController: AuthorizationViewController())
+            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let sceneDelegate = scene.delegate as? SceneDelegate,
+               let window = sceneDelegate.window {
+                window.rootViewController = rootVC
+                window.makeKeyAndVisible()
+            }
+
+        }
     }
     
     @objc func noSelected(){

@@ -3,6 +3,16 @@
     {
       "filename" : "Search-icon.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Search-Outline.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

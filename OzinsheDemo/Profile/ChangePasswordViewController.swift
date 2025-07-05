@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import Alamofire
+import SVProgressHUD
+import SwiftyJSON
 
 class ChangePasswordViewController: UIViewController {
     lazy var passwordLabel : UILabel = {
@@ -30,7 +33,10 @@ class ChangePasswordViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         let containerForButtonView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "Show"), for: .normal)
@@ -67,7 +73,10 @@ class ChangePasswordViewController: UIViewController {
         containerView.addSubview(image)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 12
+        textField.layer.borderColor = UIColor(named: "E5EBF0")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.backgroundColor = UIColor(named: "pwdchange")
         let containerForButtonView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "Show"), for: .normal)
@@ -89,12 +98,13 @@ class ChangePasswordViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 12
         button.backgroundColor = UIColor(named: "7E2DFC")
+        button.addTarget(self, action: #selector(changePasswordAction), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "FFFFFF")
         navigationItem.title = "Құпия сөзді өзгерту"
         setupUI()
     }
@@ -137,5 +147,43 @@ class ChangePasswordViewController: UIViewController {
             sender.setImage(UIImage(systemName: "eye.slash"), for: .normal)
         }
         
+    }
+    
+    @objc func changePasswordAction(){
+        let newPassword = passwordTextField.text!
+        let repeatPassword = repeatPasswordTextField.text!
+        
+        if newPassword != repeatPassword {
+            SVProgressHUD.showError(withStatus: "Пароли должны совпадать!")
+            return
+        }
+        SVProgressHUD.show()
+        
+        let headers: HTTPHeaders = ["Authorization" : "Bearer \(Storage.sharedInstance.accessToken)"]
+        let parameters = ["password": newPassword]
+        AF.request(Urls.CHANGE_PASSWORD, method: .put, parameters: parameters, encoding: JSONEncoding.default, headers: headers).responseData { response in
+            SVProgressHUD.dismiss()
+            var resultString = ""
+            if let data = response.data {
+                resultString = String(data: data, encoding: .utf8)!
+            }
+            if response.response?.statusCode == 200 {
+                let json = JSON(response.data!)
+                print("JSON: \(json)")
+                if let token = json["accessToken"].string {
+                    Storage.sharedInstance.accessToken = token
+                    UserDefaults.standard.set(token, forKey: "accessToken")
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    var ErrorString = NSLocalizedString("CONNECTION_ERROR", comment: "")
+                    if let sCode = response.response?.statusCode {
+                        print("Status Code: \(sCode)")
+                        ErrorString = ErrorString + "\(sCode)"
+                    }
+                    ErrorString = ErrorString + "\(resultString)"
+                    SVProgressHUD.showError(withStatus: "\(ErrorString)")
+                }
+            }
+        }
     }
 }

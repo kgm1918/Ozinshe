@@ -14,7 +14,7 @@ class LanguageViewController: UIViewController, UIGestureRecognizerDelegate {
     
     lazy var whiteView: UIView = {
         let whiteview = UIView()
-        whiteview.backgroundColor = .white
+        whiteview.backgroundColor = UIColor(named: "smallviewcolor")
         whiteview.layer.cornerRadius = 32
         whiteview.clipsToBounds = true
         return whiteview
@@ -52,7 +52,7 @@ class LanguageViewController: UIViewController, UIGestureRecognizerDelegate {
         view.addSubview(whiteView)
         whiteView.snp.makeConstraints { make in
             make.bottom.equalToSuperview()
-            make.left.right.equalTo(view.safeAreaLayoutGuide)
+            make.left.right.equalToSuperview()
             make.height.equalTo(330)
         }
         
@@ -88,6 +88,13 @@ class LanguageViewController: UIViewController, UIGestureRecognizerDelegate {
     @objc func dismissView(){
         self.dismiss(animated: true, completion: nil)
     }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+           if touch.view is UITableView || touch.view?.superview is UITableViewCell {
+               return false
+           }
+           return true
+       }
     
 }
 
