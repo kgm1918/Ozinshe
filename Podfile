@@ -12,4 +12,5 @@ target 'OzinsheDemo' do
   pod 'SDWebImage'
   pod 'SnapKit'
   pod 'YouTubePlayer'
+  pod 'Localize-Swift'
 end

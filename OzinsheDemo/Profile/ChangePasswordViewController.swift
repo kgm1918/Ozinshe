@@ -107,6 +107,7 @@ class ChangePasswordViewController: UIViewController {
         view.backgroundColor = UIColor(named: "FFFFFF")
         navigationItem.title = "Құпия сөзді өзгерту"
         setupUI()
+        localizeLanguage()
     }
     func setupUI(){
         view.addSubview(passwordLabel)
@@ -185,5 +186,13 @@ class ChangePasswordViewController: UIViewController {
                 }
             }
         }
+    }
+    func localizeLanguage() {
+           navigationItem.title = "CHANGE_PASSWORD_NAVIGATION".localized()
+           passwordLabel.text = "CHANGE_PASSWORD_LABEL".localized()
+           passwordRepeatLabel.text = "REPEAT_PASSWORD_LABEL".localized()
+        passwordTextField.placeholder = "ENTER_YOUR_PASSWORD".localized()
+        repeatPasswordTextField.placeholder = "ENTER_YOUR_PASSWORD".localized()
+           saveButton.setTitle("US_INFO_SAVE_BUTTON".localized(), for: .normal)
     }
 }

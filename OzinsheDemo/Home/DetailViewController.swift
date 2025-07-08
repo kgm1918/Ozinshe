@@ -13,6 +13,15 @@ import Alamofire
 class DetailViewController: UIViewController {
     var descriptionLabel: UILabel!
     var descriptionContainer: UIView!
+    var addButton : UIButton!
+    var shareButton : UIButton!
+    var firstSection : UIView!
+    var secondSection: UIView!
+    var seriesTitleLabel : UILabel!
+    var firstSectionTitleLabel : UILabel!
+    var secondSectionTitleLabel: UILabel!
+    var directorLabel: UILabel!
+    var producerLabel: UILabel!
     var movie: Movie?
     var isExpanded = false
     var fadeView: UIView!
@@ -138,7 +147,7 @@ class DetailViewController: UIViewController {
         moreButton.contentHorizontalAlignment = .leading
         moreButton.translatesAutoresizingMaskIntoConstraints = false
         contentStackView.addArrangedSubview(moreButton)
-        let directorLabel = UILabel()
+        directorLabel = UILabel()
         directorLabel.text = "Режиссер:"
         directorLabel.font = UIFont(name: "SFProDisplay-Regular", size: 14)
         directorLabel.textColor = UIColor(named: "4B5563")
@@ -149,7 +158,7 @@ class DetailViewController: UIViewController {
         directorName.font = UIFont(name: "SFProDisplay-Regular", size: 14)
         directorName.textColor = UIColor(named: "9CA3AF")
         directorName.translatesAutoresizingMaskIntoConstraints = false
-        let producerLabel = UILabel()
+        producerLabel = UILabel()
         producerLabel.text = "Продюсер:"
         producerLabel.font = UIFont(name: "SFProDisplay-Regular", size: 14)
         producerLabel.textColor = UIColor(named: "4B5563")
@@ -192,14 +201,18 @@ class DetailViewController: UIViewController {
             someMovie.cardType = 4
             return MovieCardView(item: someMovie, onTap: {})
         }
-        let firstSection = makeHorizontalSection(title: "Скриншоттар", cards: firstSectionCards, type: 4)
-        contentStackView.addArrangedSubview(firstSection)
+        let (firstSectionView, firstSectionLabel) = makeHorizontalSection(title: "Скриншоттар", cards: firstSectionCards, type: 4)
+        firstSection = firstSectionView
+        self.firstSectionTitleLabel = firstSectionLabel
+        contentStackView.addArrangedSubview(firstSectionView)
         let secondSectionCards = similarMovies.map { movie in
             MovieCardView(item: movie, onTap: {
             })
         }
-        let secondSection = makeHorizontalSection(title: "Ұқсас телехикаялар", cards: secondSectionCards, type: 3)
-        contentStackView.addArrangedSubview(secondSection)
+        let (secondSectionView, secondSectionLabel) = makeHorizontalSection(title: "Ұқсас телехикаялар", cards: secondSectionCards, type: 3)
+        secondSection = secondSectionView
+        self.secondSectionTitleLabel = secondSectionLabel
+        contentStackView.addArrangedSubview(secondSectionView)
         NSLayoutConstraint.activate([
             seriesSection.topAnchor.constraint(equalTo: secondSeparatorView.bottomAnchor, constant: 32),
         ])
@@ -226,8 +239,8 @@ class DetailViewController: UIViewController {
         playButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(playButton)
         
-        let addButton = makeVerticalButton(imageName: "Bookmark", text: "Тізімге қосу", selector: #selector(addToFavorite))
-        let shareButton = makeVerticalButton(imageName: "Share", text: "Бөлісу", selector: #selector(shareTapped))
+        addButton = makeVerticalButton(imageName: "Bookmark", text: "Тізімге қосу", selector: #selector(addToFavorite))
+        shareButton = makeVerticalButton(imageName: "Share", text: "Бөлісу", selector: #selector(shareTapped))
 
         view.addSubview(addButton)
         view.addSubview(shareButton)
@@ -254,11 +267,12 @@ class DetailViewController: UIViewController {
         
         downloadSimilarMovies()
         print("Screenshots count: \(screenshots.count)")
-
+        NotificationCenter.default.addObserver(self, selector: #selector(languageDidChangeNotification), name: NSNotification.Name("LanguageChanged"), object: nil)
+        localizeLanguage()
     }
     
 
-    private func makeHorizontalSection(title: String, cards : [UIView], type: Int) -> UIView {
+    private func makeHorizontalSection(title: String, cards : [UIView], type: Int) -> (UIView, UILabel) {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
         var height : CGFloat = 0
@@ -314,7 +328,7 @@ class DetailViewController: UIViewController {
                 button.topAnchor.constraint(equalTo: container.topAnchor),
                 button.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10)
             ])
-            return container
+            return (container, sectionLabel)
         }
         let label = UILabel()
         label.text = title
@@ -336,11 +350,11 @@ class DetailViewController: UIViewController {
 
         ])
 
-        return container
+        return (container, sectionLabel)
     }
     
-    func makeSeriesSection()-> UIStackView{
-        let sectionsTitleLabel: UILabel = {
+    func makeSeriesSection()-> UIStackView {
+        seriesTitleLabel = {
             let label = UILabel()
             label.text = "Бөлімдер"
             label.font = UIFont(name: "SFProDisplay-Bold", size: 16)
@@ -369,7 +383,7 @@ class DetailViewController: UIViewController {
         topStackView.distribution = .equalSpacing
 
         topStackView.translatesAutoresizingMaskIntoConstraints = false
-        topStackView.addArrangedSubview(sectionsTitleLabel)
+        topStackView.addArrangedSubview(seriesTitleLabel)
         
         let rightStack = UIStackView(arrangedSubviews: [seasonLabel, arrowImageView])
         rightStack.axis = .horizontal
@@ -526,4 +540,19 @@ class DetailViewController: UIViewController {
            self.present(activityViewController, animated: true, completion: nil)
     }
     
+    func localizeLanguage(){
+        let moreTitle = isExpanded ? "HIDE_DESCRIPTION_BUTTON".localized() : "FULL_DESCRIPTION_BUTTON".localized()
+        moreButton.setTitle(moreTitle, for: .normal)
+        addButton.setTitle("ADD_TO_FAVORITE".localized(), for: .normal)
+        shareButton.setTitle("SHARE_LABEL".localized(), for: .normal)
+        firstSectionTitleLabel.text = "SCREENSHOT_LABEL".localized()
+        secondSectionTitleLabel.text = "SIMILAR_MOVIES_LABEL".localized()
+        seriesTitleLabel.text = "SERIES_LABEL".localized()
+        directorLabel.text = "DIRECTOR_LABEL".localized()
+        producerLabel.text = "PRODUCER_LABEL".localized()
+    }
+    
+    @objc func languageDidChangeNotification() {
+        localizeLanguage()
+    }
 }

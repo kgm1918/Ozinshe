@@ -78,6 +78,7 @@ class UserInfoViewController: UIViewController {
         navigationItem.title = "Жеке деректер"
         setupUI()
         downloadPersonalInfo()
+        localizeLanguage()
     }
     
     func addLine(textfield: UITextField){
@@ -239,6 +240,14 @@ class UserInfoViewController: UIViewController {
                     ErrorString = ErrorString + "\(resultString)"
                     SVProgressHUD.showError(withStatus: "\(ErrorString)")
                 }
-            }
+                }
+    }
+    
+    func localizeLanguage() {
+           navigationItem.title = "USER_INFO_NAVIGATION".localized()
+           nameLabel.text = "USER_INFO_NAME_LABEL".localized()
+           phoneLabel.text = "US_INFO_PHONE_LABEL".localized()
+           birthdayLabel.text = "US_INFO_BIRTH_LABEL".localized()
+           saveButton.setTitle("US_INFO_SAVE_BUTTON".localized(), for: .normal)
     }
 }

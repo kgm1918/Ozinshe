@@ -52,6 +52,7 @@
 		8388BAB32E197B8B00C20268 /* SeasonsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BAB22E197B8B00C20268 /* SeasonsCollectionViewCell.swift */; };
 		8388BAB52E197FC300C20268 /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BAB42E197FC300C20268 /* Season.swift */; };
 		8388BAB72E19C1B000C20268 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8388BAB62E19C1B000C20268 /* PlayerViewController.swift */; };
+		8388BAC82E1B1D3F00C20268 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8388BACA2E1B1D3F00C20268 /* Localizable.strings */; };
 		C5D736E97EB76574F4A51527 /* Pods_OzinsheDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -103,6 +104,11 @@
 		8388BAB22E197B8B00C20268 /* SeasonsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonsCollectionViewCell.swift; sourceTree = "<group>"; };
 		8388BAB42E197FC300C20268 /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
 		8388BAB62E19C1B000C20268 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		8388BAC52E1B1C7B00C20268 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		8388BAC62E1B1C9200C20268 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		8388BAC92E1B1D3F00C20268 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8388BACB2E1B1D6000C20268 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8388BACC2E1B1D6300C20268 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DF073417B199FED394905A4F /* Pods-OzinsheDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OzinsheDemo.debug.xcconfig"; path = "Target Support Files/Pods-OzinsheDemo/Pods-OzinsheDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		EFF3D7408997121F4CF723DE /* Pods_OzinsheDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OzinsheDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -123,6 +129,7 @@
 		8388B9EC2DEA40BA00C20268 = {
 			isa = PBXGroup;
 			children = (
+				8388BACA2E1B1D3F00C20268 /* Localizable.strings */,
 				8388B9F72DEA40BA00C20268 /* OzinsheDemo */,
 				8388B9F62DEA40BA00C20268 /* Products */,
 				BE31A7454D44C656D4743759 /* Pods */,
@@ -294,6 +301,8 @@
 			knownRegions = (
 				en,
 				Base,
+				kk,
+				ru,
 			);
 			mainGroup = 8388B9EC2DEA40BA00C20268;
 			packageReferences = (
@@ -316,6 +325,7 @@
 				8388BA202DEEFCF100C20268 /* SF-Pro-Display-Semibold.otf in Resources */,
 				8388BA052DEA40BD00C20268 /* LaunchScreen.storyboard in Resources */,
 				8388BA1D2DEEFCF100C20268 /* SF-Pro-Display-Regular.otf in Resources */,
+				8388BAC82E1B1D3F00C20268 /* Localizable.strings in Resources */,
 				8388BA1E2DEEFCF100C20268 /* SF-Pro-Display-Bold.otf in Resources */,
 				8388BA022DEA40BD00C20268 /* Assets.xcassets in Resources */,
 				8388BA1F2DEEFCF100C20268 /* SF-Pro-Display-Medium.otf in Resources */,
@@ -419,8 +429,20 @@
 			isa = PBXVariantGroup;
 			children = (
 				8388BA042DEA40BD00C20268 /* Base */,
+				8388BAC52E1B1C7B00C20268 /* kk */,
+				8388BAC62E1B1C9200C20268 /* ru */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		8388BACA2E1B1D3F00C20268 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8388BAC92E1B1D3F00C20268 /* en */,
+				8388BACB2E1B1D6000C20268 /* kk */,
+				8388BACC2E1B1D6300C20268 /* ru */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -431,6 +453,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -494,6 +517,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

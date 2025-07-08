@@ -7,10 +7,17 @@
 
 import UIKit
 import SnapKit
+import Localize_Swift
+
+protocol LanguageProtocol {
+    func languageDidChange()
+}
 
 class LanguageViewController: UIViewController, UIGestureRecognizerDelegate {
-    let languages = ["English", "Қазақша", "Русский"]
-    var selectedLanguage = "Қазақша"
+    var delegate : LanguageProtocol?
+    let languages = [["English", "en"], ["Қазақша", "kk"], ["Русский", "ru"]]
+    var selectedLanguage = Localize.currentLanguage()
+
     
     lazy var whiteView: UIView = {
         let whiteview = UIView()
@@ -104,16 +111,20 @@ extension LanguageViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let language = languages[indexPath.row]
+        let language = languages[indexPath.row][0]
         let cell = tableView.dequeueReusableCell(withIdentifier: "LanguageCell", for: indexPath) as! LanguageTableViewCell
         cell.languageLabel.text = language
-        cell.setChecked(language == selectedLanguage)
+        let languageCode = languages[indexPath.row][1]
+        cell.setChecked(languageCode == selectedLanguage)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedLanguage = languages[indexPath.row]
-        tableView.reloadData()
+        selectedLanguage = languages[indexPath.row][0]
+        Localize.setCurrentLanguage(languages[indexPath.row][1])
+        delegate?.languageDidChange()
+        NotificationCenter.default.post(name: NSNotification.Name("LanguageChanged"), object: nil)
+        dismiss(animated: true, completion: nil)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 65

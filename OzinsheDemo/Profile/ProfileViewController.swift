@@ -7,13 +7,14 @@
 
 import UIKit
 import SnapKit
+import Localize_Swift
 
 enum sectionTypes {
     case buttonType
     case switchType
 }
 
-class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, LanguageProtocol {
    
     lazy var profileImageView : UIImageView = {
         let imageview = UIImageView()
@@ -62,6 +63,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         navigationController?.navigationBar.tintColor = UIColor(named: "blackcolor")
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: exitButton)
         setupUI()
+        localizeLanguage()
     }
     
     func setupUI(){
@@ -116,6 +118,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 let languageVC = LanguageViewController()
                 languageVC.modalPresentationStyle = .overFullScreen
                 languageVC.modalTransitionStyle = .crossDissolve
+                languageVC.delegate = self
                 present(languageVC, animated: true)
             }
         case .switchType: break
@@ -126,14 +129,26 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
         switch sections[indexPath.section]{
         case .buttonType:
-            let titles = ["Жеке деректер", "Құпия сөзді өзгерту", "Тіл", "Ережелер мен шарттар"]
-            let rightText = ["Өңдеу", "", "Қазақша", ""]
+            let titles = [
+                "USER_INFO_BUTTON".localized(),
+                "CHANGE_PASSWORD_BUTTON".localized(),
+                "LANGUAGE".localized(),
+                "TERMS_AND_CONDITIONS".localized()
+            ]
+
+            let rightText = [
+                "USER_INFO_EDIT_LABEL".localized(),
+                "",
+                getLanguageTitle(Localize.currentLanguage()),
+                ""
+            ]
+            
             cell.textLabel?.text = titles[indexPath.row]
             cell.accessoryType = .disclosureIndicator
             cell.detailTextLabel?.text = rightText[indexPath.row]
             cell.selectionStyle = .default
         case .switchType:
-            let titles = ["Хабарландырулар", "Қараңғы режим"]
+            let titles = ["NOTIFICATIONS".localized(), "DARK_MODE".localized()]
             cell.textLabel?.text = titles[indexPath.row]
             
             let toggle = UISwitch()
@@ -176,7 +191,24 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             UIApplication.shared.windows.first?.overrideUserInterfaceStyle = sender.isOn ? .dark : .light
         }
     }
+    
+    func getLanguageTitle(_ code: String) -> String {
+        switch code {
+        case "kk": return "Қазақша"
+        case "ru": return "Русский"
+        case "en": return "English"
+        default: return "Қазақша"
+        }
+    }
 
-  
+    func localizeLanguage() {
+            navigationItem.title = "PROFILE_TITLE".localized()
+            profileLabel.text = "MY_PROFILE".localized()
+            tableView.reloadData()
+        }
+        
+    func languageDidChange() {
+        localizeLanguage()
+    }
     
 }

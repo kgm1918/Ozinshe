@@ -163,18 +163,18 @@ class RegistrationViewController: UIViewController {
         return button
     }()
     
-    lazy var signUpSuggestionLabel: UILabel = {
+    lazy var signInSuggestionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Сізде аккаунт бар па?"
+        label.text = "Сізде аккаунт бар ма?"
         label.font = UIFont(name: "SFProDisplay-Regular", size: 14)
         label.textColor = UIColor(named: "colorquestion")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    lazy var signUpSuggestionButton: UIButton = {
+    lazy var signInSuggestionButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Тіркелу", for: .normal)
+        button.setTitle("Кіру", for: .normal)
         button.setTitleColor(UIColor(named: "B376F7"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProDisplay-Semibold", size: 14)
         button.addTarget(self, action: #selector(signInPage), for: .touchUpInside)
@@ -229,21 +229,22 @@ class RegistrationViewController: UIViewController {
         ])
       
         view.addSubview(signUpButton)
-        view.addSubview(signUpSuggestionLabel)
-        view.addSubview(signUpSuggestionButton)
+        view.addSubview(signInSuggestionLabel)
+        view.addSubview(signInSuggestionButton)
         NSLayoutConstraint.activate([
             signUpButton.topAnchor.constraint(equalTo: secondPasswordTextField.bottomAnchor, constant: 40),
             signUpButton.leadingAnchor.constraint(equalTo: secondPasswordTextField.leadingAnchor),
             signUpButton.heightAnchor.constraint(equalToConstant: 56),
             signUpButton.trailingAnchor.constraint(equalTo: secondPasswordTextField.trailingAnchor),
             
-            signUpSuggestionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 110),
-            signUpSuggestionLabel.topAnchor.constraint(equalTo: signUpButton.bottomAnchor, constant: 24),
-            signUpSuggestionButton.leadingAnchor.constraint(equalTo: signUpSuggestionLabel.trailingAnchor, constant: 5),
-            signUpSuggestionButton.centerYAnchor.constraint(equalTo: signUpSuggestionLabel.centerYAnchor),
+            signInSuggestionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 110),
+            signInSuggestionLabel.topAnchor.constraint(equalTo: signUpButton.bottomAnchor, constant: 24),
+            signInSuggestionButton.leadingAnchor.constraint(equalTo: signInSuggestionLabel.trailingAnchor, constant: 5),
+            signInSuggestionButton.centerYAnchor.constraint(equalTo: signInSuggestionLabel.centerYAnchor),
             
         ])
-       
+        NotificationCenter.default.addObserver(self, selector: #selector(languageDidChangeNotification), name: NSNotification.Name("LanguageChanged"), object: nil)
+        localizeLanguage()
        
     }
     @objc func togglePasswordVisibility(sender: UIButton){
@@ -326,6 +327,24 @@ class RegistrationViewController: UIViewController {
         tabViewController.modalPresentationStyle = .fullScreen
         self.present(tabViewController, animated: true, completion: nil)
     }
+    
+    func localizeLanguage(){
+        signUpLabel.text = "SIGN_UP_LABEL".localized()
+        signUpButton.setTitle("SIGN_UP_BUTTON".localized(), for: .normal)
+        enterDataLabel.text = "DETAIL_INFORM_LABEL".localized()
+        emailTextField.placeholder = "SIGN_UP_EMAIL".localized()
+        passwordLabel.text = "CHANGE_PASSWORD_LABEL".localized()
+        passwordTextField.placeholder = "ENTER_YOUR_PASSWORD".localized()
+        secondPasswordLabel.text = "REPEAT_PASSWORD_LABEL".localized()
+        secondPasswordTextField.placeholder = "ENTER_YOUR_PASSWORD".localized()
+        signUpButton.setTitle("SIGN_UP_BUTTON".localized(), for: .normal)
+        signInSuggestionLabel.text = "SIGN_UP_QUESTION_LABEL".localized()
+        signInSuggestionButton.setTitle("SIGN_IN_BUTTON_UP".localized(), for: .normal)
+    }
+    @objc func languageDidChangeNotification() {
+        localizeLanguage()
+    }
+    
 }
 
 

@@ -61,8 +61,8 @@ class LogOutViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
+        localizeLanguage()
     }
     
     func setupUI(){
@@ -131,6 +131,13 @@ class LogOutViewController: UIViewController {
         yesButton.backgroundColor = .clear
         yesButton.setTitleColor(UIColor(named: "5415C6"), for: .normal)
         self.dismiss(animated: true)
+    }
+    
+    func localizeLanguage() {
+        exitLabel.text = "LOG_OUT_LABEL".localized()
+        subtitleLabel.text = "LOG_OUT_QUES_LABEL".localized()
+        yesButton.titleLabel?.text = "LOG_OUT_BUTTON".localized()
+        noButton.titleLabel?.text = "NO_LOG_OUT_BUTTON".localized()
     }
 
 }

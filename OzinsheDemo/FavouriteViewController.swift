@@ -19,6 +19,7 @@ class FavouriteViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: "MovieTableCell")
         downloadFavouriteMovies()
+        localizeLanguage()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -73,6 +74,8 @@ class FavouriteViewController: UITableViewController {
     @objc func reloadFavorites() {
         downloadFavouriteMovies()
     }
-
+    func localizeLanguage(){
+        navigationItem.title = "FAVORITE_NAVIGATION".localized()
+    }
    
 }

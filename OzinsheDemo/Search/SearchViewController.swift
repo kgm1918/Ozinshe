@@ -33,7 +33,7 @@ class LeftAlignedCollectionViewFlowLayout : UICollectionViewFlowLayout {
 }
 
 class SearchViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDataSource, UITableViewDelegate {
-    
+ 
     var categories : [Category] = []
 //    ["Телехикая", "Ситком", "Көркем фильм", "Мультфильм", "Мультсериал", "Аниме", "Тв-бағдарлама және реалити-шоу", "Деректі фильм", "Музыка", "Шетел фильмдері"]
     var movies : [Movie] = []
@@ -124,6 +124,8 @@ class SearchViewController: UIViewController, UICollectionViewDelegate, UICollec
         hideKeyboardWhenTappedAround()
         tableView.isHidden = true
         downloadCategories()
+        NotificationCenter.default.addObserver(self, selector: #selector(languageDidChangeNotification), name: NSNotification.Name("LanguageChanged"), object: nil)
+        localizeLanguage()
     }
     
     func downloadCategories(){
@@ -333,5 +335,16 @@ extension SearchViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
         downloadSearchMovies()
     }
-   
+    func localizeLanguage(){
+        navigationItem.title = "SEARCH_NAVIGATION".localized()
+        searchTextField.placeholder = "SEARCH_PLACEHOLDER".localized()
+        categoriesLabel.text = "CATEGORIES_SEARCH".localized()
+        tableView.reloadData()
+    }
+    @objc func languageDidChangeNotification() {
+        localizeLanguage()
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
+    
 }

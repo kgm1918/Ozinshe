@@ -259,7 +259,8 @@ class AuthorizationViewController: UIViewController {
             googleButton.trailingAnchor.constraint(equalTo: passwordTextField.trailingAnchor),
             googleButton.heightAnchor.constraint(equalToConstant: 52),
         ])
-       
+        NotificationCenter.default.addObserver(self, selector: #selector(languageDidChangeNotification), name: NSNotification.Name("LanguageChanged"), object: nil)
+        localizeLanguage()
     }
     @objc func togglePasswordVisibility(sender: UIButton){
         passwordTextField.isSecureTextEntry.toggle()
@@ -321,4 +322,23 @@ class AuthorizationViewController: UIViewController {
         self.present(tabViewController, animated: true, completion: nil)
     }
 
+    func localizeLanguage(){
+        salemLabel.text = "HELLO_LABEL".localized()
+        signinButton.setTitle("SIGN_IN_BUTTON_UP".localized(), for: .normal)
+        signinLabel.text = "DETAIL_SIGN_IN".localized()
+        emailTextField.placeholder = "SIGN_UP_EMAIL".localized()
+        passwordLabel.text = "CHANGE_PASSWORD_LABEL".localized()
+        passwordTextField.placeholder = "USER_PASSWORD_CHANGE".localized()
+        signinButton.setTitle("SIGN_IN_BUTTON_UP".localized(), for: .normal)
+        signUpSuggestionLabel.text = "SIGN_IN_QUESTION".localized()
+        signUpSuggestionButton.setTitle("SIGN_UP_BUTTON".localized(), for: .normal)
+        forgotButton.setTitle("FORGOT_PASSWORD_QUESTION".localized(), for: .normal)
+        orLabel.text = "OR_LABEL".localized()
+        appleIDButton.setTitle("APPLE_SIGNIN".localized(), for: .normal)
+        googleButton.setTitle("GOOGLE_SIGNIN".localized(), for: .normal)
+    }
+    @objc func languageDidChangeNotification() {
+        localizeLanguage()
+    }
+    
 }
